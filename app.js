@@ -20,22 +20,29 @@ app.get('/', (req, res) => {
 })
 // for show
 app.get('/restaurants/:restaurant_id', (req, res) => {
-  const restaurants = restaurantList.results.find (
-    (restaurant) => restaurant.id.toString() === req.params.restaurant_id 
+  const restaurants = restaurantList.results.find(
+    (restaurant) => restaurant.id.toString() === req.params.restaurant_id
   )
   res.render('show', { restaurants })
 })
 
-// for show
+// for search
 app.get('/search', (req, res) => {
   const keyword = req.query.keyword
   const restaurantSearch = restaurantList.results.filter(
-    (restaurant) => { return restaurant.name.toLowerCase().includes (keyword.toLowerCase())}
+    function (restaurant) {
+      return restaurant.name.toLowerCase().includes(keyword.toLowerCase())
+        | restaurant.category.toLowerCase().includes(keyword.toLowerCase())
+
+      if (restaurantList.results.filter.length === 0) {
+        return alert(keyword + '沒有找到相似餐廳，請重新輸入')
+      }
+    }
   )
   res.render('index', { restaurants: restaurantSearch, keyword: keyword })
 })
 
-// start and listen on the Express server
+start and listen on the Express server
 app.listen(port, () => {
   console.log(`Express is listening on localhost:${port}`)
 })
